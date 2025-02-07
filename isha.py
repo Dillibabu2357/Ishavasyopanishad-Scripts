@@ -13,6 +13,7 @@ CSV_PATH = "./data/isha.csv"
 
 
 class Language(str, Enum):
+    sa = "sa"
     en = "en"
     kn = "kn"
     ta = "ta"
@@ -126,6 +127,17 @@ def process_sutra_data(entry: dict, token: str):
             {"language": lang, "text": meaning_text},
             token,
         )
+        for lang in Language:  # 🔥 Fix: Loop through all languages, not just Sanskrit
+                for philosophy in Philosophy:
+                    bhashyam_text = entry.get(f"bhashyam_{lang.value}_{philosophy.value}", "")
+                    if bhashyam_text:
+                        add_entry(
+                            f"/isha/sutras/{sutra_no}/bhashyam",
+                            {"language": lang.value, "text": bhashyam_text, "philosophy": philosophy.value},
+                            token,
+                        )
+                    else:
+                        print(f"Bhashyam not found for Sutra {sutra_no} ({lang.value} - {philosophy.value})")
 
     # Add interpretations for all language and philosophy combinations
     for lang in Language:
